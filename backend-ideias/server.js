@@ -1,12 +1,10 @@
 require('dotenv').config(); // Deve ser a primeira linha do seu arquivo server.js
 
-
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const { sequelize } = require('./models');
 const authRoutes = require('./routes/authRoutes'); // Rota de autenticação
-
 
 const app = express();
 app.use(express.json());
@@ -28,3 +26,8 @@ sequelize.authenticate()
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
+
+
+const ideaRoutes = require('./routes/ideaRoutes');
+
+app.use('/api/ideas', ideaRoutes);
