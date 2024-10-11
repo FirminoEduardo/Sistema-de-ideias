@@ -18,7 +18,7 @@ exports.submitIdea = async (req, res) => {
   }
 };
 
-const { Idea, Vote } = require('../models');
+const {Vote } = require('../models');
 
 // Votar em uma ideia
 exports.voteIdea = async (req, res) => {
@@ -50,3 +50,28 @@ exports.voteIdea = async (req, res) => {
   }
 };
 
+// Moderação de Ideias (Aprovação ou Rejeição)
+exports.moderateIdea = async (req, res) => {
+  const ideaId = req.params.id;
+  const { status } = req.body;  // O status será "aprovada" ou "rejeitada"
+  const userPermission = req.user.permissao;  // Verifica a permissão do usuário
+
+  if (userPermission !== 'admin') {
+    return res.status(403).json({ message: 'Acesso negado. Apenas administradores podem moderar ideias.' });
+  }
+
+  try {
+    const idea = await Idea.findByPk(ideaId);
+    if (!idea) {
+      return res.status(404).json({ message: 'Ideia não encontrada.' });
+    }
+
+    // Atualiza o status da ideia
+    idea.status = status;
+    await idea.save();
+
+    res.json({ message: `Ideia ${status} com sucesso!`, ideia: idea });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao moderar ideia.' });
+  }
+};
