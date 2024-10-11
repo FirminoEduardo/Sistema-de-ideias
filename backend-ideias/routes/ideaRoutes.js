@@ -8,3 +8,8 @@ const router = express.Router();
 router.post('/submit', verifyToken, submitIdea);
 
 module.exports = router;
+
+const { voteIdea } = require('../controllers/ideasController'); //Rota para o usuário votar
+const { verifyToken } = require('../middlewares/authMiddleware'); //Valida se o usuario que votou está cadastrado
+
+router.post('/:id/vote', verifyToken, voteIdea);  // ID da ideia nos parâmetros
