@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
   const Idea = sequelize.define('Idea', {
     titulo: DataTypes.STRING,
     descricao: DataTypes.STRING,
-    categoria: DataTypes.STRING,  // Novo campo
+    categoria: DataTypes.STRING,
     status: {
       type: DataTypes.STRING,
       defaultValue: 'pendente',
@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
+    isArchived: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    }
   });
 
   return Idea;

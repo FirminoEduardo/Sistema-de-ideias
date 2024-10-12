@@ -39,3 +39,7 @@ app.use('/api/ideas', commentRoutes);  // Conectando a rota de comentários às 
 const reportRoutes = require('./routes/reportRoutes');
 
 app.use('/api/reports', reportRoutes);  // Conectando a rota de relatórios
+
+const notificationRoutes = require('./routes/notificationRoutes');
+
+app.use('/api/notifications', notificationRoutes);  // Rota de notificações

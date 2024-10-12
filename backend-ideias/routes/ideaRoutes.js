@@ -21,3 +21,5 @@ router.put('/:id/moderate', verifyToken, moderateIdea);  // ID da ideia nos par√
 const { listIdeas } = require('../controllers/ideasController');
 
 router.get('/', listIdeas);  // Lista todas as ideias, com filtros opcionais
+
+router.put('/:id/archive', verifyToken, archiveIdea);  // Arquivar uma ideia

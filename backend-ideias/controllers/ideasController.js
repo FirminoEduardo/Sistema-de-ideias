@@ -92,3 +92,56 @@ exports.listIdeas = async (req, res) => {
     res.status(500).json({ error: 'Erro ao listar ideias.' });
   }
 };
+
+const { Notification } = require('../models');
+
+// Moderação de Ideias (Aprovação ou Rejeição)
+exports.moderateIdea = async (req, res) => {
+  const ideaId = req.params.id;
+  const { status } = req.body;
+  const userPermission = req.user.permissao;
+
+  if (userPermission !== 'admin') {
+    return res.status(403).json({ message: 'Acesso negado. Apenas administradores podem moderar ideias.' });
+  }
+
+  try {
+    const idea = await Idea.findByPk(ideaId);
+    if (!idea) {
+      return res.status(404).json({ message: 'Ideia não encontrada.' });
+    }
+
+    // Atualiza o status da ideia
+    idea.status = status;
+    await idea.save();
+
+    // Notificar o autor da ideia sobre a moderação
+    await Notification.create({
+      userId: idea.userId,
+      message: `Sua ideia "${idea.titulo}" foi ${status}.`
+    });
+
+    res.json({ message: `Ideia ${status} com sucesso!`, ideia: idea });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao moderar ideia.' });
+  }
+};
+
+// Arquivar uma ideia
+exports.archiveIdea = async (req, res) => {
+  const ideaId = req.params.id;
+
+  try {
+    const idea = await Idea.findByPk(ideaId);
+    if (!idea) {
+      return res.status(404).json({ message: 'Ideia não encontrada.' });
+    }
+
+    idea.isArchived = true;
+    await idea.save();
+
+    res.json({ message: 'Ideia arquivada com sucesso!' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao arquivar ideia.' });
+  }
+};
