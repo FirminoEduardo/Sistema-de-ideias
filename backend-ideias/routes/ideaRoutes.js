@@ -17,3 +17,7 @@ router.post('/:id/vote', verifyToken, voteIdea);  // ID da ideia nos parâmetros
 const { moderateIdea } = require('../controllers/ideasController');
 
 router.put('/:id/moderate', verifyToken, moderateIdea);  // ID da ideia nos parâmetros
+
+const { listIdeas } = require('../controllers/ideasController');
+
+router.get('/', listIdeas);  // Lista todas as ideias, com filtros opcionais

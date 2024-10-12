@@ -75,3 +75,20 @@ exports.moderateIdea = async (req, res) => {
     res.status(500).json({ error: 'Erro ao moderar ideia.' });
   }
 };
+
+// Listar e filtrar ideias
+exports.listIdeas = async (req, res) => {
+  const { categoria, status } = req.query;
+
+  try {
+    const where = {};
+    
+    if (categoria) where.categoria = categoria;
+    if (status) where.status = status;
+
+    const ideas = await Idea.findAll({ where });
+    res.json(ideas);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao listar ideias.' });
+  }
+};
