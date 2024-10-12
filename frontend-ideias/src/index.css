@@ -1,0 +1,101 @@
+/* index.css */
+
+/* Reset CSS */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', sans-serif; /* Fonte moderna */
+  background-color: #f4f4f9; /* Fundo claro */
+  color: #333; /* Cor do texto padrão */
+  line-height: 1.6; /* Altura da linha para melhor legibilidade */
+}
+
+h1, h2, h3, h4 {
+  color: #2c3e50; /* Cor dos títulos */
+  margin-bottom: 10px; /* Espaço abaixo dos títulos */
+  text-align: center; /* Centraliza os títulos */
+}
+
+a {
+  color: #3498db; /* Cor dos links */
+  text-decoration: none; /* Remove o sublinhado dos links */
+  transition: color 0.3s ease; /* Efeito de transição */
+}
+
+a:hover {
+  color: #2980b9; /* Muda a cor ao passar o mouse */
+  text-decoration: underline; /* Sublinhado ao passar o mouse */
+}
+
+button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 25px; /* Bordas arredondadas */
+  background-color: #3498db; /* Cor de fundo do botão */
+  color: white; /* Cor do texto do botão */
+  cursor: pointer; /* Muda o cursor ao passar o mouse */
+  font-weight: bold; /* Texto em negrito */
+  transition: background-color 0.3s ease, transform 0.2s; /* Efeito de transição */
+}
+
+button:hover {
+  background-color: #2980b9; /* Muda a cor ao passar o mouse */
+  transform: scale(1.05); /* Aumenta ligeiramente o botão ao passar o mouse */
+}
+
+/* Container geral */
+.container {
+  max-width: 800px; /* Largura máxima do conteúdo */
+  margin: 20px auto; /* Centraliza o container */
+  padding: 20px; /* Espaço interno */
+  background-color: #ffffff; /* Fundo branco para os componentes */
+  border-radius: 10px; /* Bordas arredondadas */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra leve */
+}
+
+/* Lista de ideias */
+.idea-list {
+  list-style-type: none; /* Remove marcadores */
+  padding: 0; /* Remove preenchimento */
+}
+
+.idea-list li {
+  background-color: #ecf0f1; /* Cor de fundo para cada item da lista */
+  padding: 15px; /* Espaço interno */
+  margin-bottom: 10px; /* Espaço abaixo de cada item */
+  border-radius: 8px; /* Bordas arredondadas */
+  transition: transform 0.2s; /* Efeito de transição */
+}
+
+.idea-list li:hover {
+  transform: translateY(-2px); /* Levanta ligeiramente o item ao passar o mouse */
+}
+
+/* Estilo para campos de entrada */
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px; /* Espaço abaixo */
+  border: 1px solid #ccc; /* Borda leve */
+  border-radius: 8px; /* Bordas arredondadas */
+  transition: border-color 0.3s; /* Efeito de transição */
+}
+
+input:focus, textarea:focus {
+  border-color: #3498db; /* Borda azul ao focar */
+  outline: none; /* Remove contorno padrão */
+}
+
+/* Estilo para a seção de login e registro */
+.login-container, .register-container {
+  background-color: #ffffff; /* Fundo branco */
+  border-radius: 10px; /* Bordas arredondadas */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra leve */
+  padding: 20px; /* Espaço interno */
+  margin: 20px auto; /* Centraliza */
+  max-width: 400px; /* Largura máxima */
+}

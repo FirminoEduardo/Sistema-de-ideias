@@ -22,4 +22,6 @@ const { listIdeas } = require('../controllers/ideasController');
 
 router.get('/', listIdeas);  // Lista todas as ideias, com filtros opcionais
 
+const { archiveIdea } = require('../controllers/ideasController');
+
 router.put('/:id/archive', verifyToken, archiveIdea);  // Arquivar uma ideia
