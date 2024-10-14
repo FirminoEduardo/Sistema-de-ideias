@@ -1,21 +1,20 @@
 const express = require('express');
 const { verifyToken } = require('../middlewares/authMiddleware');
-const { Idea, Comment } = require('../models'); // Supondo que você tenha esses modelos
+const { Idea, Comment } = require('../models');
 
 const router = express.Router();
 
 // Rota para buscar todas as ideias
 router.get('/', async (req, res) => {
-    try {
-      const ideas = await Idea.findAll({
-        order: [['votos', 'DESC']] // Ordena as ideias pelo número de votos em ordem decrescente
-      });
-      res.status(200).json(ideas);
-    } catch (error) {
-      res.status(500).json({ message: 'Erro ao buscar ideias', error });
-    }
-  });
-  
+  try {
+    const ideas = await Idea.findAll({
+      order: [['votos', 'DESC']] // Ordena as ideias pelo número de votos em ordem decrescente
+    });
+    res.status(200).json(ideas);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao buscar ideias', error });
+  }
+});
 
 // Rota para submeter uma nova ideia
 router.post('/submit', verifyToken, async (req, res) => {
@@ -46,7 +45,11 @@ router.post('/:id/vote', verifyToken, async (req, res) => {
 
 // Rota para adicionar um comentário em uma ideia
 router.post('/:id/comments', verifyToken, async (req, res) => {
-  const { comentario } = req.body;
+  const { conteudo } = req.body; // Aqui você deve estar pegando 'conteudo'
+
+  if (!conteudo) {
+    return res.status(400).json({ message: 'O conteúdo do comentário é obrigatório' });
+  }
 
   try {
     const idea = await Idea.findByPk(req.params.id);
@@ -55,34 +58,27 @@ router.post('/:id/comments', verifyToken, async (req, res) => {
     }
 
     // Cria um novo comentário e associa à ideia
-    const newComment = await Comment.create({ comentario, ideaId: idea.id, votos: 0 });
+    const newComment = await Comment.create({ conteudo, ideaId: idea.id, votos: 0 });
     res.status(201).json({ message: 'Comentário adicionado com sucesso', comment: newComment });
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao adicionar o comentário', error });
+    console.error('Erro ao adicionar comentário:', error);
+    res.status(500).json({ message: 'Erro ao adicionar o comentário', error: error.message });
   }
 });
 
-// Rota para adicionar um comentário em uma ideia
-router.post('/:id/comments', verifyToken, async (req, res) => {
-    const { conteudo } = req.body; // Mude 'comentario' para 'conteudo'
-  
-    console.log('ID da ideia:', req.params.id); // Log do ID da ideia
-    console.log('Comentário recebido:', conteudo); // Log do conteúdo do comentário
-  
+// Rota para buscar todas as ideias com comentários
+router.get('/', async (req, res) => {
     try {
-      const idea = await Idea.findByPk(req.params.id);
-      if (!idea) {
-        console.log('Ideia não encontrada'); // Log para verificação
-        return res.status(404).json({ message: 'Ideia não encontrada' });
-      }
-  
-      // Cria um novo comentário e associa à ideia
-      const newComment = await Comment.create({ conteudo, ideaId: idea.id, votos: 0 });
-      console.log('Comentário adicionado:', newComment); // Log do comentário criado
-      res.status(201).json({ message: 'Comentário adicionado com sucesso', comment: newComment });
+      const ideas = await Idea.findAll({
+        include: [{
+          model: Comment, // Inclui o modelo de Comment
+          as: 'Comments', // Certifique-se de que a alias 'Comments' está definida no seu modelo
+        }],
+        order: [['votos', 'DESC']] // Ordena as ideias pelo número de votos em ordem decrescente
+      });
+      res.status(200).json(ideas);
     } catch (error) {
-      console.error('Erro ao adicionar comentário:', error); // Log do erro
-      res.status(500).json({ message: 'Erro ao adicionar o comentário', error: error.message });
+      res.status(500).json({ message: 'Erro ao buscar ideias', error });
     }
   });
   

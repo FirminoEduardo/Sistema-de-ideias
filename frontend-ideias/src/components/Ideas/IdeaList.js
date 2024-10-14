@@ -7,12 +7,18 @@ const IdeaList = () => {
   const [titulo, setTitulo] = useState('');
   const [descricao, setDescricao] = useState('');
   const [categoria, setCategoria] = useState('');
+  const [comentarios, setComentarios] = useState({}); // Estado para comentários
 
   useEffect(() => {
     const fetchIdeas = async () => {
       try {
         const response = await api.get('/ideas');
-        setIdeas(response.data);
+        // Certifique-se de que 'Comments' é um array
+        const formattedIdeas = response.data.map(idea => ({
+          ...idea,
+          Comments: idea.Comments || [] // Define como array se não existir
+        }));
+        setIdeas(formattedIdeas);
       } catch (error) {
         console.error('Erro ao buscar ideias:', error);
         setIdeas([]); // Resete para um array vazio em caso de erro
@@ -30,7 +36,11 @@ const IdeaList = () => {
       setCategoria('');
       // Atualiza a lista de ideias
       const response = await api.get('/ideas');
-      setIdeas(response.data);
+      const formattedIdeas = response.data.map(idea => ({
+        ...idea,
+        Comments: idea.Comments || [] // Define como array se não existir
+      }));
+      setIdeas(formattedIdeas);
     } catch (error) {
       alert('Erro ao submeter ideia: ' + error.response.data.message);
     }
@@ -39,24 +49,45 @@ const IdeaList = () => {
   const handleVote = async (id) => {
     try {
       await api.post(`ideas/${id}/vote`);
-      // Atualiza a lista de ideias
       const response = await api.get('/ideas');
-      setIdeas(response.data);
+      const formattedIdeas = response.data.map(idea => ({
+        ...idea,
+        Comments: idea.Comments || [] // Define como array se não existir
+      }));
+      setIdeas(formattedIdeas);
     } catch (error) {
       alert('Erro ao votar: ' + error.response.data.message);
     }
   };
 
-  const handleComment = async (id, commentText) => {
+  const handleCommentChange = (id, value) => {
+    setComentarios(prev => ({ ...prev, [id]: value }));
+  };
+
+  const handleComment = async (id) => {
+    const commentText = comentarios[id]; // Pega o comentário correspondente
+    if (!commentText) return; // Se não houver texto, não faz nada
+
     try {
-        await api.post(`ideas/${id}/comments`, { conteudo: commentText }); // Use 'conteudo' aqui
-        // Atualiza a lista de ideias
-        const response = await api.get('/ideas');
-        setIdeas(response.data);
+      const response = await api.post(`/ideas/${id}/comments`, { conteudo: commentText });
+      // Atualiza a lista de ideias após comentar
+      console.log('Comentário adicionado com sucesso');
+      // Limpa o campo de comentário após envio
+      setComentarios(prev => ({ ...prev, [id]: '' }));
+
+      // Atualiza a lista de ideias
+      const updatedIdeas = ideas.map(idea => {
+        if (idea.id === id) {
+          return { ...idea, Comments: [...idea.Comments, response.data.comment] }; // Adiciona o novo comentário
+        }
+        return idea;
+      });
+      setIdeas(updatedIdeas);
     } catch (error) {
-        alert('Erro ao comentar: ' + error.response.data.message);
+      console.error('Erro ao adicionar comentário:', error);
+      alert('Erro ao adicionar comentário: ' + error.response?.data?.message || error.message);
     }
-};
+  };
 
   return (
     <div className="container">
@@ -77,14 +108,26 @@ const IdeaList = () => {
               <button className="vote-button" onClick={() => handleVote(idea.id)}>Votar</button>
 
               <div className="comment-section">
-                <input type="text" placeholder="Adicionar comentário" 
+                <input
+                  type="text"
+                  placeholder="Adicionar comentário"
+                  value={comentarios[idea.id] || ''} // Usa o valor armazenado para cada ideia
+                  onChange={(e) => handleCommentChange(idea.id, e.target.value)}
                   onKeyPress={(e) => {
                     if (e.key === 'Enter') {
-                      handleComment(idea.id, e.target.value);
-                      e.target.value = ''; // Limpa o campo de texto após enviar
+                      handleComment(idea.id);
                     }
                   }} 
                 />
+              </div>
+              
+              <div className="comments">
+                {/* Exibe comentários relacionados à ideia, caso existam */}
+                {idea.Comments && idea.Comments.map(comment => (
+                  <div key={comment.id} className="comment">
+                    <p><strong>User ID: {comment.userId}</strong>: {comment.conteudo} (Votos: {comment.votos})</p>
+                  </div>
+                ))}
               </div>
             </li>
           ))

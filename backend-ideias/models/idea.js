@@ -1,15 +1,41 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Idea = sequelize.define('Idea', {
-    titulo: DataTypes.STRING,
-    descricao: DataTypes.TEXT,
-    categoria: DataTypes.STRING,
-    votos: { type: DataTypes.INTEGER, defaultValue: 0 }, // Campo para contar votos
-    status: DataTypes.STRING
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    titulo: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    descricao: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    categoria: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    votos: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    status: {
+      type: DataTypes.STRING,
+      defaultValue: 'ativa', // Exemplo de valor padrão
+    },
+  }, {
+    tableName: 'Ideas',
+    timestamps: true,
   });
 
   Idea.associate = function(models) {
-    Idea.hasMany(models.Comment, { as: 'comentarios', foreignKey: 'ideaId' }); // Relacionamento com comentários
+    Idea.hasMany(models.Comment, {
+      foreignKey: 'ideaId',
+      as: 'comments',
+    });
   };
 
   return Idea;
