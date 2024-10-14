@@ -7,23 +7,21 @@ const IdeaList = () => {
   const [titulo, setTitulo] = useState('');
   const [descricao, setDescricao] = useState('');
   const [categoria, setCategoria] = useState('');
-  const [comentarios, setComentarios] = useState({}); // Estado para comentários
+  const [commentTexts, setCommentTexts] = useState({}); // Estado para armazenar textos de comentários
+
+  // Função para buscar ideias
+  const fetchIdeas = async () => {
+    try {
+      const response = await api.get('/ideas'); // Faz a requisição para obter as ideias
+      setIdeas(response.data); // Atualiza o estado com as ideias recebidas
+    } catch (error) {
+      console.error('Erro ao buscar ideias:', error);
+      setIdeas([]); // Resete para um array vazio em caso de erro
+    }
+  };
 
   useEffect(() => {
-    const fetchIdeas = async () => {
-      try {
-        const response = await api.get('/ideas');
-        const formattedIdeas = response.data.map(idea => ({
-          ...idea,
-          Comments: idea.Comments || [] // Define como array se não existir
-        }));
-        setIdeas(formattedIdeas);
-      } catch (error) {
-        console.error('Erro ao buscar ideias:', error);
-        setIdeas([]); // Resete para um array vazio em caso de erro
-      }
-    };
-    fetchIdeas();
+    fetchIdeas(); // Busca as ideias quando o componente é montado
   }, []);
 
   const handleSubmit = async (e) => {
@@ -34,12 +32,7 @@ const IdeaList = () => {
       setDescricao('');
       setCategoria('');
       // Atualiza a lista de ideias
-      const response = await api.get('/ideas');
-      const formattedIdeas = response.data.map(idea => ({
-        ...idea,
-        Comments: idea.Comments || [] // Define como array se não existir
-      }));
-      setIdeas(formattedIdeas);
+      fetchIdeas(); // Busca as ideias novamente após adicionar uma nova
     } catch (error) {
       alert('Erro ao submeter ideia: ' + error.response.data.message);
     }
@@ -48,69 +41,26 @@ const IdeaList = () => {
   const handleVote = async (id) => {
     try {
       await api.post(`ideas/${id}/vote`);
-      const response = await api.get('/ideas');
-      const formattedIdeas = response.data.map(idea => ({
-        ...idea,
-        Comments: idea.Comments || [] // Define como array se não existir
-      }));
-      setIdeas(formattedIdeas);
+      // Atualiza a lista de ideias
+      fetchIdeas(); // Busca as ideias novamente após votar
     } catch (error) {
       alert('Erro ao votar: ' + error.response.data.message);
     }
   };
 
-  const handleCommentChange = (id, value) => {
-    setComentarios(prev => ({ ...prev, [id]: value }));
-  };
-
-  const handleComment = async (id) => {
-    const commentText = comentarios[id]; // Pega o comentário correspondente
-    if (!commentText) return; // Se não houver texto, não faz nada
+  const handleComment = async (ideaId) => {
+    const commentText = commentTexts[ideaId]; // Pega o texto do comentário para a ideia específica
+    if (!commentText) return; // Não faz nada se o campo de comentário estiver vazio
 
     try {
-      const response = await api.post(`/ideas/${id}/comments`, { conteudo: commentText });
-      // Atualiza a lista de ideias após comentar
-      console.log('Comentário adicionado com sucesso');
-      // Limpa o campo de comentário após envio
-      setComentarios(prev => ({ ...prev, [id]: '' }));
-
-      // Atualiza a lista de ideias
-      const updatedIdeas = ideas.map(idea => {
-        if (idea.id === id) {
-          return { ...idea, Comments: [...idea.Comments, response.data.comment] }; // Adiciona o novo comentário
-        }
-        return idea;
-      });
-      setIdeas(updatedIdeas);
+      await api.post(`/ideas/${ideaId}/comments`, { conteudo: commentText }); // Envia o comentário
+      fetchIdeas(); // Atualiza a lista de ideias após adicionar um comentário
+      setCommentTexts((prev) => ({ ...prev, [ideaId]: '' })); // Limpa o campo de comentário para essa ideia
     } catch (error) {
       console.error('Erro ao adicionar comentário:', error);
       alert('Erro ao adicionar comentário: ' + error.response?.data?.message || error.message);
     }
   };
-
-  const handleCommentVote = async (commentId, ideaId) => {
-    try {
-      await api.post(`/ideas/${ideaId}/comments/${commentId}/vote`);
-      const updatedIdeas = ideas.map(idea => {
-        if (idea.id === ideaId) {
-          return {
-            ...idea,
-            Comments: idea.Comments.map(comment => {
-              if (comment.id === commentId) {
-                return { ...comment, votos: comment.votos + 1 }; // Incrementa os votos
-              }
-              return comment;
-            }),
-          };
-        }
-        return idea;
-      });
-      setIdeas(updatedIdeas);
-    } catch (error) {
-      alert('Erro ao votar no comentário: ' + error.response.data.message);
-    }
-  };
-   
 
   return (
     <div className="container">
@@ -122,7 +72,7 @@ const IdeaList = () => {
         <button type="submit">Submeter Ideia</button>
       </form>
       <ul className="idea-list">
-        {ideas && ideas.length > 0 ? (
+        {ideas.length > 0 ? (
           ideas.map(idea => (
             <li key={idea.id}>
               <h4>{idea.titulo} ({idea.categoria})</h4>
@@ -131,27 +81,27 @@ const IdeaList = () => {
               <button className="vote-button" onClick={() => handleVote(idea.id)}>Votar</button>
 
               <div className="comment-section">
-                <input
-                  type="text"
-                  placeholder="Adicionar comentário"
-                  value={comentarios[idea.id] || ''} // Usa o valor armazenado para cada ideia
-                  onChange={(e) => handleCommentChange(idea.id, e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      handleComment(idea.id);
-                    }
-                  }} 
+                <input 
+                  type="text" 
+                  placeholder="Adicionar comentário" 
+                  value={commentTexts[idea.id] || ''} 
+                  onChange={(e) => setCommentTexts({ ...commentTexts, [idea.id]: e.target.value })} 
                 />
+                <button onClick={() => handleComment(idea.id)}>Enviar</button>
               </div>
-              
-              <div className="comments">
-                {/* Exibe comentários relacionados à ideia, caso existam */}
-                {idea.Comments && idea.Comments.map(comment => (
-                  <div key={comment.id} className="comment">
-                    <p><strong>User ID: {comment.userId}</strong>: {comment.conteudo} (Votos: {comment.votos})</p>
-                    <button onClick={() => handleCommentVote(comment.id, idea.id)}>Votar</button>
-                  </div>
-                ))}
+
+              <div className="comments-list">
+                {idea.comments && idea.comments.length > 0 ? (
+                  idea.comments.map(comment => (
+                    <div key={comment.id}>
+                      <p>User ID: {comment.userId} (Votos: {comment.votos})</p>
+                      <p>{comment.conteudo}</p>
+                      <button onClick={() => handleVote(comment.id)}>Votar</button>
+                    </div>
+                  ))
+                ) : (
+                  <p>Nenhum comentário encontrado.</p>
+                )}
               </div>
             </li>
           ))

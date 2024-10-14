@@ -1,39 +1,37 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Comment = sequelize.define('Comment', {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
     conteudo: {
       type: DataTypes.STRING,
-      allowNull: false, // Não pode ser nulo
+      allowNull: false,
     },
-    userId: {
+    votos: {
       type: DataTypes.INTEGER,
-      allowNull: true, // Permitindo nulo se necessário
+      defaultValue: 0,
     },
     ideaId: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      references: {
+        model: 'Ideas',
+        key: 'id',
+      },
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'Users',
+        key: 'id',
+      },
     },
   }, {
-    tableName: 'Comments', // Nome da tabela no banco de dados
+    tableName: 'Comments',
     timestamps: true,
   });
 
-  Comment.associate = function(models) {
-    // Define associações aqui
-    Comment.belongsTo(models.Idea, {
-      foreignKey: 'ideaId',
-      as: 'idea',
-    });
-    Comment.belongsTo(models.User, {
-      foreignKey: 'userId',
-      as: 'user',
-    });
+  Comment.associate = (models) => {
+    Comment.belongsTo(models.Idea, { foreignKey: 'ideaId' });
+    Comment.belongsTo(models.User, { foreignKey: 'userId', as: 'user' }); // Associação com o usuário
   };
-
+  
   return Comment;
 };
