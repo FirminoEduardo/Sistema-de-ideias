@@ -8,6 +8,7 @@ const IdeaList = () => {
   const [descricao, setDescricao] = useState('');
   const [categoria, setCategoria] = useState('');
   const [commentTexts, setCommentTexts] = useState({}); // Estado para armazenar textos de comentários
+  const [isAdmin, setIsAdmin] = useState(false); // Estado para armazenar se o usuário é admin
 
   // Função para buscar ideias
   const fetchIdeas = async () => {
@@ -22,6 +23,12 @@ const IdeaList = () => {
 
   useEffect(() => {
     fetchIdeas(); // Busca as ideias quando o componente é montado
+    // Verifica se o usuário é admin ao carregar o componente
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodifica o token
+      setIsAdmin(decodedToken.permissao === 'admin'); // Verifica se o usuário é admin
+    }
   }, []);
 
   const handleSubmit = async (e) => {
@@ -69,6 +76,15 @@ const IdeaList = () => {
     }
   };
 
+  const handleArchive = async (id) => {
+    try {
+      await api.put(`/ideas/${id}/archive`); // Chama a rota para arquivar a ideia
+      fetchIdeas(); // Atualiza a lista de ideias
+    } catch (error) {
+      alert('Erro ao arquivar a ideia: ' + error.response.data.message);
+    }
+  };
+
   return (
     <div className="container">
       <h2>Ideias</h2>
@@ -86,6 +102,10 @@ const IdeaList = () => {
               <p>{idea.descricao}</p>
               <p>Status: {idea.status} | Votos: {idea.votos}</p>
               <button className="vote-button" onClick={() => handleVote(idea.id)}>Votar</button>
+              
+              {isAdmin && (
+                <button className="archive-button" onClick={() => handleArchive(idea.id)}>Arquivar</button>
+              )}
 
               <div className="comment-section">
                 <input 
@@ -99,7 +119,6 @@ const IdeaList = () => {
 
               <div className="comments-list">
                 {idea.comments && idea.comments.length > 0 ? (
-                  // Ordena os comentários do mais votado para o menos votado
                   idea.comments.sort((a, b) => b.votos - a.votos).map(comment => (
                     <div key={comment.id} className="comment-item">
                       <p>{comment.conteudo}</p>

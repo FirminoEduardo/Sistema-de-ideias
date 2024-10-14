@@ -30,7 +30,6 @@ module.exports = (sequelize, DataTypes) => {
 
   Comment.associate = (models) => {
     Comment.belongsTo(models.Idea, { foreignKey: 'ideaId' });
-    Comment.belongsTo(models.User, { foreignKey: 'userId', as: 'user' }); // Associação com o usuário
   };
   
   return Comment;

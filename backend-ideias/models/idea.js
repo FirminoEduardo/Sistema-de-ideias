@@ -1,4 +1,3 @@
-// models/Idea.js
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Idea = sequelize.define('Idea', {
@@ -27,6 +26,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: 'ativa',
     },
+    archived: { // Campo adicionado para arquivar ideias
+      type: DataTypes.BOOLEAN,
+      defaultValue: false, // Por padrão, ideias não são arquivadas
+    },
   }, {
     tableName: 'Ideas',
     timestamps: true,
@@ -35,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
   Idea.associate = function(models) {
     Idea.hasMany(models.Comment, {
       foreignKey: 'ideaId',
-      as: 'comments', // Esse alias deve ser usado na consulta
+      as: 'comments',
     });
   };
 
