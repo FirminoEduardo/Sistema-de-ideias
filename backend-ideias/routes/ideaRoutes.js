@@ -82,5 +82,20 @@ router.get('/', async (req, res) => {
     }
   });
   
-
+// Rota para votar em um comentário
+router.post('/:id/comments/:commentId/vote', verifyToken, async (req, res) => {
+    try {
+      const comment = await Comment.findByPk(req.params.commentId);
+      if (!comment) {
+        return res.status(404).json({ message: 'Comentário não encontrado' });
+      }
+  
+      comment.votos += 1; // Incrementa o número de votos
+      await comment.save();
+      res.status(200).json({ message: 'Voto no comentário registrado com sucesso', votos: comment.votos });
+    } catch (error) {
+      res.status(500).json({ message: 'Erro ao votar no comentário', error });
+    }
+  });
+  
 module.exports = router;

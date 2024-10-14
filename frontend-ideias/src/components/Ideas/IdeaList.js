@@ -13,7 +13,6 @@ const IdeaList = () => {
     const fetchIdeas = async () => {
       try {
         const response = await api.get('/ideas');
-        // Certifique-se de que 'Comments' é um array
         const formattedIdeas = response.data.map(idea => ({
           ...idea,
           Comments: idea.Comments || [] // Define como array se não existir
@@ -89,6 +88,30 @@ const IdeaList = () => {
     }
   };
 
+  const handleCommentVote = async (commentId, ideaId) => {
+    try {
+      await api.post(`/ideas/${ideaId}/comments/${commentId}/vote`);
+      const updatedIdeas = ideas.map(idea => {
+        if (idea.id === ideaId) {
+          return {
+            ...idea,
+            Comments: idea.Comments.map(comment => {
+              if (comment.id === commentId) {
+                return { ...comment, votos: comment.votos + 1 }; // Incrementa os votos
+              }
+              return comment;
+            }),
+          };
+        }
+        return idea;
+      });
+      setIdeas(updatedIdeas);
+    } catch (error) {
+      alert('Erro ao votar no comentário: ' + error.response.data.message);
+    }
+  };
+   
+
   return (
     <div className="container">
       <h2>Ideias</h2>
@@ -126,6 +149,7 @@ const IdeaList = () => {
                 {idea.Comments && idea.Comments.map(comment => (
                   <div key={comment.id} className="comment">
                     <p><strong>User ID: {comment.userId}</strong>: {comment.conteudo} (Votos: {comment.votos})</p>
+                    <button onClick={() => handleCommentVote(comment.id, idea.id)}>Votar</button>
                   </div>
                 ))}
               </div>
