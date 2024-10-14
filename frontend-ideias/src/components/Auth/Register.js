@@ -1,38 +1,50 @@
 import React, { useState } from 'react';
-import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
-import './Register.css'; // Importando o CSS
-
+import api from '../../services/api';
 
 const Register = () => {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [permissao, setPermissao] = useState('colaborador'); // Colaborador por padrão
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/auth/register', { nome, email, senha, permissao });
-      alert('Usuário registrado com sucesso!');
-      navigate('/login'); // Redireciona para login após registro
+      // Definindo a permissão padrão como "colaborador"
+      await api.post('/auth/register', { nome, email, senha, permissao: 'colaborador' });
+      alert('Cadastro realizado com sucesso!');
+      navigate('/login'); // Redireciona para a tela de login após o cadastro
     } catch (error) {
-      alert('Erro ao registrar: ' + error.response.data.message);
+      alert('Erro ao fazer o cadastro: ' + (error.response?.data?.message || error.message));
     }
   };
 
   return (
-    <div className='register-container'>
+    <div className="register-container">
       <h2>Cadastro</h2>
       <form onSubmit={handleRegister}>
-        <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome" required />
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
-        <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Senha" required />
-        <select value={permissao} onChange={(e) => setPermissao(e.target.value)}>
-          <option value="colaborador">Colaborador</option>
-          <option value="admin">Administrador</option>
-        </select>
+        <input
+          type="text"
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+          placeholder="Nome"
+          required
+        />
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          required
+        />
+        <input
+          type="password"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+          placeholder="Senha"
+          required
+        />
         <button type="submit">Cadastrar</button>
       </form>
     </div>

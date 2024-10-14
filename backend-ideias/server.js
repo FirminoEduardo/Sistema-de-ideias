@@ -5,6 +5,10 @@ const helmet = require('helmet');
 const cors = require('cors');
 const { sequelize } = require('./models');
 const authRoutes = require('./routes/authRoutes'); // Rota de autenticação
+const ideaRoutes = require('./routes/ideaRoutes'); // Rota de ideias
+const commentRoutes = require('./routes/commentRoutes'); // Rota de comentários
+const reportRoutes = require('./routes/reportRoutes'); // Rota de relatórios
+const notificationRoutes = require('./routes/notificationRoutes'); // Rota de notificações
 
 const app = express();
 app.use(express.json());
@@ -14,6 +18,10 @@ app.use(cors());
 const PORT = process.env.PORT || 3000;
 
 app.use('/api/auth', authRoutes); // Rota de autenticação
+app.use('/api/ideas', ideaRoutes); // Rota de ideias
+app.use('/api/comments', commentRoutes); // Rota de comentários (separada)
+app.use('/api/reports', reportRoutes); // Rota de relatórios
+app.use('/api/notifications', notificationRoutes); // Rota de notificações
 
 app.get('/', (req, res) => {
   res.send('API do Sistema de Ideias está rodando');
@@ -26,20 +34,3 @@ sequelize.authenticate()
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
-
-
-const ideaRoutes = require('./routes/ideaRoutes');
-
-app.use('/api/ideas', ideaRoutes);
-
-const commentRoutes = require('./routes/commentRoutes');
-
-app.use('/api/ideas', commentRoutes);  // Conectando a rota de comentários às ideias
-
-const reportRoutes = require('./routes/reportRoutes');
-
-app.use('/api/reports', reportRoutes);  // Conectando a rota de relatórios
-
-const notificationRoutes = require('./routes/notificationRoutes');
-
-app.use('/api/notifications', notificationRoutes);  // Rota de notificações
