@@ -72,3 +72,18 @@ button:hover {
   background-color: #e9ecef;
   border-left: 4px solid #007bff;
 }
+.comment-item {
+  margin: 10px 0; /* Espaçamento entre os comentários */
+  padding: 10px; /* Espaçamento interno do comentário */
+  border: 1px solid #ccc; /* Borda cinza ao redor do comentário */
+  border-radius: 5px; /* Bordas arredondadas */
+  background-color: #f9f9f9; /* Cor de fundo para o comentário */
+}
+
+.comment-section {
+  margin-top: 10px; /* Espaçamento acima da seção de comentários */
+}
+
+.vote-button {
+  margin-left: 10px; /* Espaçamento à esquerda do botão de voto */
+}

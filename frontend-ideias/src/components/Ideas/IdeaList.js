@@ -31,20 +31,27 @@ const IdeaList = () => {
       setTitulo('');
       setDescricao('');
       setCategoria('');
-      // Atualiza a lista de ideias
-      fetchIdeas(); // Busca as ideias novamente após adicionar uma nova
+      fetchIdeas(); // Atualiza a lista de ideias
     } catch (error) {
       alert('Erro ao submeter ideia: ' + error.response.data.message);
     }
   };
 
-  const handleVote = async (id) => {
+  const handleVoteIdea = async (id) => {
     try {
-      await api.post(`ideas/${id}/vote`);
-      // Atualiza a lista de ideias
-      fetchIdeas(); // Busca as ideias novamente após votar
+      await api.post(`/ideas/${id}/vote`);
+      fetchIdeas(); // Atualiza a lista de ideias
     } catch (error) {
       alert('Erro ao votar: ' + error.response.data.message);
+    }
+  };
+
+  const handleVoteComment = async (ideaId, commentId) => {
+    try {
+      await api.post(`/ideas/${ideaId}/comments/${commentId}/vote`);
+      fetchIdeas(); // Atualiza a lista de ideias
+    } catch (error) {
+      alert('Erro ao votar no comentário: ' + error.response.data.message);
     }
   };
 
@@ -78,7 +85,7 @@ const IdeaList = () => {
               <h4>{idea.titulo} ({idea.categoria})</h4>
               <p>{idea.descricao}</p>
               <p>Status: {idea.status} | Votos: {idea.votos}</p>
-              <button className="vote-button" onClick={() => handleVote(idea.id)}>Votar</button>
+              <button className="vote-button" onClick={() => handleVoteIdea(idea.id)}>Votar</button>
 
               <div className="comment-section">
                 <input 
@@ -93,10 +100,10 @@ const IdeaList = () => {
               <div className="comments-list">
                 {idea.comments && idea.comments.length > 0 ? (
                   idea.comments.map(comment => (
-                    <div key={comment.id}>
-                      <p>User ID: {comment.userId} (Votos: {comment.votos})</p>
+                    <div key={comment.id} className="comment-item">
                       <p>{comment.conteudo}</p>
-                      <button onClick={() => handleVote(comment.id)}>Votar</button>
+                      <p>Votos: {comment.votos}</p>
+                      <button onClick={() => handleVoteComment(idea.id, comment.id)}>Votar</button>
                     </div>
                   ))
                 ) : (
