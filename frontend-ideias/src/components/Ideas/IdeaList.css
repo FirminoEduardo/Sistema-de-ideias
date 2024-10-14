@@ -87,3 +87,17 @@ button:hover {
 .vote-button {
   margin-left: 10px; /* Espaçamento à esquerda do botão de voto */
 }
+
+.archive-button {
+  background-color: red; /* Cor de fundo vermelha */
+  color: white; /* Cor do texto branca */
+  border: none; /* Remove a borda padrão */
+  padding: 10px 15px; /* Adiciona algum preenchimento ao botão */
+  border-radius: 5px; /* Adiciona bordas arredondadas */
+  cursor: pointer; /* Altera o cursor para indicar que é clicável */
+  font-weight: bold; /* Torna o texto do botão em negrito */
+}
+
+.archive-button:hover {
+  background-color: darkred; /* Escurece o botão ao passar o mouse */
+}
