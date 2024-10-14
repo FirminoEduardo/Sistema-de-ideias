@@ -49,14 +49,14 @@ const IdeaList = () => {
 
   const handleComment = async (id, commentText) => {
     try {
-      await api.post(`ideas/${id}/comments`, { comentario: commentText });
-      // Atualiza a lista de ideias
-      const response = await api.get('/ideas');
-      setIdeas(response.data);
+        await api.post(`ideas/${id}/comments`, { conteudo: commentText }); // Use 'conteudo' aqui
+        // Atualiza a lista de ideias
+        const response = await api.get('/ideas');
+        setIdeas(response.data);
     } catch (error) {
-      alert('Erro ao comentar: ' + error.response.data.message);
+        alert('Erro ao comentar: ' + error.response.data.message);
     }
-  };
+};
 
   return (
     <div className="container">

@@ -64,24 +64,27 @@ router.post('/:id/comments', verifyToken, async (req, res) => {
 
 // Rota para adicionar um comentário em uma ideia
 router.post('/:id/comments', verifyToken, async (req, res) => {
-    const { comentario } = req.body;
+    const { conteudo } = req.body; // Mude 'comentario' para 'conteudo'
   
-    console.log('Recebido comentario:', comentario); // Adicione este log
+    console.log('ID da ideia:', req.params.id); // Log do ID da ideia
+    console.log('Comentário recebido:', conteudo); // Log do conteúdo do comentário
   
     try {
       const idea = await Idea.findByPk(req.params.id);
       if (!idea) {
+        console.log('Ideia não encontrada'); // Log para verificação
         return res.status(404).json({ message: 'Ideia não encontrada' });
       }
   
-      const newComment = await Comment.create({ comentario, ideaId: idea.id, votos: 0 });
+      // Cria um novo comentário e associa à ideia
+      const newComment = await Comment.create({ conteudo, ideaId: idea.id, votos: 0 });
+      console.log('Comentário adicionado:', newComment); // Log do comentário criado
       res.status(201).json({ message: 'Comentário adicionado com sucesso', comment: newComment });
     } catch (error) {
-      console.error('Erro ao adicionar comentário:', error);
-      res.status(500).json({ message: 'Erro ao adicionar o comentário', error });
+      console.error('Erro ao adicionar comentário:', error); // Log do erro
+      res.status(500).json({ message: 'Erro ao adicionar o comentário', error: error.message });
     }
   });
-  
   
 
 module.exports = router;

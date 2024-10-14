@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Login from './components/Auth/TempLogin.js'; 
 import Register from './components/Auth/Register.js';
 import IdeaList from './components/Ideas/IdeaList.js';
@@ -24,7 +24,7 @@ class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      // Você pode renderizar qualquer UI de fallback
+      // Renderiza uma UI de fallback
       return <h1>Algo deu errado.</h1>;
     }
 
@@ -32,18 +32,43 @@ class ErrorBoundary extends React.Component {
   }
 }
 
+// Função para verificar se o usuário está autenticado
+const isAuthenticated = () => {
+  return !!localStorage.getItem('token'); // Verifica se o token existe
+};
+
 const App = () => {
   return (
     <ErrorBoundary>
       <Router>
         <div>
           <Routes>
-            <Route path="/" element={<IdeaList />} />
+            {/* Página inicial será a de login */}
             <Route path="/login" element={<Login />} />
+
+            {/* Registro */}
             <Route path="/register" element={<Register />} />
-            <Route path="/ideas" element={<IdeaList />} />
-            <Route path="/notifications" element={<NotificationList />} />
-            <Route path="/reports" element={<ReportList />} />
+
+            {/* Rota protegida para a lista de ideias */}
+            <Route
+              path="/ideas"
+              element={isAuthenticated() ? <IdeaList /> : <Navigate to="/login" />}
+            />
+
+            {/* Rota protegida para a lista de notificações */}
+            <Route
+              path="/notifications"
+              element={isAuthenticated() ? <NotificationList /> : <Navigate to="/login" />}
+            />
+
+            {/* Rota protegida para a lista de relatórios */}
+            <Route
+              path="/reports"
+              element={isAuthenticated() ? <ReportList /> : <Navigate to="/login" />}
+            />
+
+            {/* Redirecionar para /login por padrão */}
+            <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
         </div>
       </Router>
