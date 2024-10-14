@@ -37,7 +37,7 @@ const IdeaList = () => {
     }
   };
 
-  const handleVoteIdea = async (id) => {
+  const handleVote = async (id) => {
     try {
       await api.post(`/ideas/${id}/vote`);
       fetchIdeas(); // Atualiza a lista de ideias
@@ -85,7 +85,7 @@ const IdeaList = () => {
               <h4>{idea.titulo} ({idea.categoria})</h4>
               <p>{idea.descricao}</p>
               <p>Status: {idea.status} | Votos: {idea.votos}</p>
-              <button className="vote-button" onClick={() => handleVoteIdea(idea.id)}>Votar</button>
+              <button className="vote-button" onClick={() => handleVote(idea.id)}>Votar</button>
 
               <div className="comment-section">
                 <input 
@@ -99,7 +99,8 @@ const IdeaList = () => {
 
               <div className="comments-list">
                 {idea.comments && idea.comments.length > 0 ? (
-                  idea.comments.map(comment => (
+                  // Ordena os comentários do mais votado para o menos votado
+                  idea.comments.sort((a, b) => b.votos - a.votos).map(comment => (
                     <div key={comment.id} className="comment-item">
                       <p>{comment.conteudo}</p>
                       <p>Votos: {comment.votos}</p>
