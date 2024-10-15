@@ -1,143 +1,53 @@
-Sistema de Ideias
-Este projeto é um Sistema de Submissão e Votação de Ideias que permite aos usuários submeterem suas próprias ideias, votar em outras ideias e adicionar comentários. O projeto inclui autenticação JWT para proteger as rotas, controle de permissões para usuários administradores, e permite que ideias sejam arquivadas, tornando-as invisíveis para outros usuários.
+# Sistema de Submissão e Votação de Ideias
 
-Funcionalidades
-Autenticação de Usuário: Usuários podem criar uma conta e fazer login no sistema utilizando JWT.
-Submissão de Ideias: Qualquer usuário autenticado pode submeter novas ideias com título, descrição e categoria.
-Votação de Ideias: Os usuários podem votar em ideias e os votos são contabilizados e ordenados.
-Comentários Anônimos: Usuários podem comentar nas ideias sem que seus nomes apareçam, e os comentários também podem ser votados.
-Arquivamento de Ideias: Administradores podem arquivar ideias, o que as torna invisíveis para os outros usuários.
-Sistema de Permissões: Somente usuários com permissão de "admin" podem arquivar ideias.
-Tecnologias Utilizadas
-Frontend: React.js
-React Router
-Axios
-CSS customizado
-Backend: Node.js, Express.js
-Sequelize (ORM)
-JWT para autenticação
-PostgreSQL como banco de dados
-Ferramentas de Desenvolvimento:
-Insomnia para testar a API
-PgAdmin para gerenciar o banco de dados PostgreSQL
-Requisitos
-Node.js (v14+)
-NPM ou Yarn
-PostgreSQL
-PgAdmin (opcional para gerenciar o banco de dados)
+Este projeto é um **Sistema de Submissão e Votação de Ideias** que oferece aos usuários uma plataforma para compartilhar ideias, votar nas ideias de outros usuários e adicionar comentários. Ele conta com uma interface intuitiva e funcionalidades robustas para promover a interação e avaliação de ideias, além de um sistema de controle de permissões para usuários administradores.
 
-Configuração do Projeto
+## Funcionalidades Principais
 
-Clone o repositório:
-git clone https://github.com/seu-usuario/sistema-de-ideias.git
+- **Autenticação de Usuário**: Usuários podem registrar uma conta e fazer login, garantindo que apenas membros autenticados possam submeter ideias, votar e comentar.
+- **Submissão de Ideias**: Após o login, os usuários podem enviar novas ideias contendo título, descrição e categoria.
+- **Votação de Ideias**: Os usuários podem votar em suas ideias favoritas, e as ideias são ordenadas com base no número de votos.
+- **Comentários Anônimos**: Qualquer usuário autenticado pode comentar nas ideias de outros, sendo os comentários exibidos de forma anônima.
+- **Votação de Comentários**: Além das ideias, os comentários também podem ser votados, destacando os mais relevantes.
+- **Arquivamento de Ideias**: Administradores podem arquivar ideias, tornando-as invisíveis para usuários comuns, mas mantendo-as visíveis para administradores.
+- **Sistema de Permissões**: Apenas usuários com a permissão de administrador têm a capacidade de arquivar ideias, garantindo um controle adequado.
 
-Acesse o diretório do projeto:
-cd sistema-de-ideias
+## Sistema de Controle de Permissões
 
+O sistema conta com dois tipos de usuários:
 
-Backend
+1. **Usuário Padrão**: Pode submeter ideias, votar e adicionar comentários. As ideias arquivadas por administradores não são visíveis para eles.
+2. **Administrador**: Possui todas as permissões de um usuário padrão, além de poder arquivar ideias. Ideias arquivadas permanecem visíveis apenas para administradores.
 
-Acesse o diretório do backend:
+## Design Visual
 
-cd backend-ideias
-Instale as dependências:
-npm install
+O sistema conta com uma interface limpa e moderna, incluindo:
 
-Crie um arquivo .env na raiz do diretório backend-ideias com as seguintes variáveis:
+- **Botões intuitivos**: Para votar em ideias e comentários.
+- **Ordenação por relevância**: Ideias e comentários são automaticamente organizados pelo número de votos.
+- **Comentários anônimos**: Os nomes dos usuários não são exibidos nos comentários para garantir o anonimato.
+- **Botão de arquivar**: Administradores têm um botão vermelho destacado para arquivar ideias.
 
-PORT=3000
-DB_URL=your-database-url
-DB_USERNAME=your-database-username
-DB_PASSWORD=your-database-password
-DB_DATABASE=sistema_ideias
-DB_HOST=localhost
-JWT_SECRET=sua-chavesecreta
+## Estrutura de Funcionalidades
 
-Sincronize o banco de dados com o Sequelize:
-npx sequelize-cli db:migrate
+- **Página Principal**: Exibe a lista de ideias ordenadas por número de votos, com opções para votar e comentar em cada uma delas.
+- **Submissão de Ideias**: Formulário para submissão de novas ideias, acessível para todos os usuários autenticados.
+- **Votação**: Tanto ideias quanto comentários podem ser votados para destacar os melhores.
+- **Arquivamento**: Disponível apenas para administradores, permitindo que ideias sejam arquivadas e removidas da visualização geral.
 
-Inicie o servidor:
-npm start
+## Arquitetura e Tecnologias
 
-O backend estará disponível em http://localhost:3000.
+O sistema é dividido em um backend com APIs REST e um frontend dinâmico:
 
-Frontend
-Acesse o diretório do frontend:
-cd ../frontend-ideias
+- **Frontend**: Desenvolvido com React.js, Axios e React Router para navegação e chamadas API.
+- **Backend**: Desenvolvido com Node.js e Express.js, utilizando Sequelize como ORM para manipulação do banco de dados PostgreSQL.
+- **Autenticação**: Proteção das rotas via JSON Web Tokens (JWT).
+- **Banco de Dados**: PostgreSQL, gerenciado por meio do Sequelize.
 
-Instale as dependências:
-npm install
+## Objetivo do Projeto
 
-Crie um arquivo .env na raiz do diretório frontend-ideias com a URL base do backend:
-REACT_APP_API_URL=http://localhost:3000/api
+O **Sistema de Submissão e Votação de Ideias** foi desenvolvido com o objetivo de fornecer uma plataforma interativa para promover a criação de novas ideias e o engajamento da comunidade por meio de votação e feedback. Com seu sistema de controle de permissões, ele é capaz de distinguir administradores de usuários padrão, garantindo o gerenciamento adequado das ideias submetidas.
 
-Inicie o frontend:
-npm start
+---
 
-O frontend estará disponível em http://localhost:3001.
-
-Rotas da API
-
-Autenticação
-POST /api/auth/login: Faz login no sistema.
-Body: { "email": "email", "senha": "senha" }
-POST /api/auth/register: Registra um novo usuário.
-Body: { "nome": "Nome", "email": "email", "senha": "senha" }
-
-Ideias
-GET /api/ideas: Retorna todas as ideias, exceto as arquivadas.
-POST /api/ideas/submit: Submete uma nova ideia.
-Body: { "titulo": "Título", "descricao": "Descrição", "categoria": "Categoria" }
-POST /api/ideas/:id/vote: Vota em uma ideia.
-PUT /api/ideas/:id/archive: Arquiva uma ideia (somente para admins).
-
-Comentários
-POST /api/ideas/:id/comments: Adiciona um comentário a uma ideia.
-Body: { "conteudo": "Texto do comentário" }
-POST /api/ideas/:ideaId/comments/:commentId/vote: Vota em um comentário.
-
-Funcionalidades para Administradores
-Usuários administradores (com permissao: 'admin') têm a capacidade de arquivar ideias. As ideias arquivadas não serão visíveis para usuários comuns, mas ainda serão listadas para os administradores.
-
-Para criar um usuário admin, você pode usar o Insomnia ou uma ferramenta similar para fazer uma requisição POST para a rota /api/auth/register com o campo permissao: "admin":
-
-json
-Copiar código
-{
-  "nome": "Admin",
-  "email": "admin@admin.com",
-  "senha": "admin",
-  "permissao": "admin"
-}
-Estilo Visual
-O frontend está estilizado com um design limpo e minimalista. Aqui estão algumas das características visuais:
-
-Botões de votar e comentar estilizados para serem intuitivos.
-Comentários e ideias ordenados por número de votos.
-Botão de arquivar para administradores destacado em vermelho.
-
-
-Estrutura de Diretórios
-
-sistema-de-ideias/
-├── backend-ideias/
-│   ├── controllers/
-│   ├── middlewares/
-│   ├── models/
-│   ├── routes/
-│   ├── migrations/
-│   ├── server.js
-│   └── .env
-├── frontend-ideias/
-│   ├── public/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── services/
-│   │   ├── App.js
-│   │   ├── index.js
-│   └── .env
-└── README.md
-
-Contribuições
-Contribuições são bem-vindas! Se você encontrar um bug ou tiver sugestões de melhorias, fique à vontade para abrir uma issue ou enviar um pull request.
-
+Sinta-se à vontade para contribuir com o projeto e propor melhorias através de issues ou pull requests.
