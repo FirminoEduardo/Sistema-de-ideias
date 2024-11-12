@@ -3,21 +3,22 @@
     "username": "eduardofirmino", 
     "password": "postgres",         
     "database": "sistema_ideias",    
-    "host": "127.0.0.1",             
+    "host": "database",             
+    "port": 5432,
     "dialect": "postgres"      
   },
   "test": {
     "username": "eduardofirmino",
     "password": "postgres",
     "database": "sistema_ideias_test",  
-    "host": "127.0.0.1",
+    "host": "database",
     "dialect": "postgres"
   },
   "production": {
     "username": "eduardofirmino",
     "password": "postgres",
     "database": "sistema_ideias_prod",   
-    "host": "127.0.0.1",
+    "host": "database",
     "dialect": "postgres"
   }
 }

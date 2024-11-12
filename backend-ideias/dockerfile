@@ -1,0 +1,20 @@
+# Dockerfile do backend
+FROM node:16-alpine
+
+# Cria diretório de trabalho
+WORKDIR /usr/src/app
+
+# Copia os arquivos do package.json e package-lock.json para instalar dependências
+COPY package*.json ./
+
+# Instala as dependências
+RUN npm install
+
+# Copia o restante do código para a imagem
+COPY . .
+
+# Expõe a porta em que o backend rodará
+EXPOSE 3000
+
+# Comando para rodar o backend
+CMD ["npm", "start"]

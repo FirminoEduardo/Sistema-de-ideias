@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: 'ativa',
     },
-    archived: { // Campo adicionado para arquivar ideias
+    isArchived: { // Altere o nome para 'isArchived'
       type: DataTypes.BOOLEAN,
       defaultValue: false, // Por padrão, ideias não são arquivadas
     },

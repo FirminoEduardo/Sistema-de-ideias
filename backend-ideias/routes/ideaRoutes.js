@@ -9,12 +9,16 @@ router.get('/', async (req, res) => {
     try {
         const ideas = await Idea.findAll({
             where: {
-                archived: false, // Filtra apenas as ideias que não estão arquivadas
+                isArchived: false,
             },
-            include: [{ model: Comment, as: 'comments' }], // Inclui os comentários
-            order: [['votos', 'DESC']] // Ordena as ideias pelo número de votos
+            include: [{ 
+                model: Comment, 
+                as: 'comments',
+                attributes: ['id', 'comentario', 'votos', 'ideaId', 'userId', 'createdAt', 'updatedAt'] 
+            }],
+            order: [['votos', 'DESC']]
         });
-        res.status(200).json(ideas); // Retorna as ideias com comentários
+        res.status(200).json(ideas);
     } catch (error) {
         res.status(500).json({ message: 'Erro ao buscar ideias', error });
     }
@@ -48,9 +52,9 @@ router.post('/:id/vote', verifyToken, async (req, res) => {
 
 // Rota para adicionar um comentário em uma ideia
 router.post('/:id/comments', verifyToken, async (req, res) => {
-    const { conteudo } = req.body; // Aqui você deve estar pegando 'conteudo'
+    const { comentario } = req.body; // Pegue o valor de 'comentario'
 
-    if (!conteudo) {
+    if (!comentario) {
         return res.status(400).json({ message: 'O conteúdo do comentário é obrigatório' });
     }
 
@@ -60,7 +64,8 @@ router.post('/:id/comments', verifyToken, async (req, res) => {
             return res.status(404).json({ message: 'Ideia não encontrada' });
         }
 
-        const newComment = await Comment.create({ conteudo, ideaId: idea.id, votos: 0 });
+        // Adiciona o comentário com o campo 'comentario'
+        const newComment = await Comment.create({ comentario, ideaId: idea.id, votos: 0 });
         res.status(201).json({ message: 'Comentário adicionado com sucesso', comment: newComment });
     } catch (error) {
         console.error('Erro ao adicionar comentário:', error);
@@ -84,6 +89,7 @@ router.post('/:ideaId/comments/:commentId/vote', verifyToken, async (req, res) =
     }
 });
 
+// Rota para arquivar uma ideia
 router.put('/:id/archive', verifyToken, async (req, res) => {
     try {
         const idea = await Idea.findByPk(req.params.id);
@@ -96,8 +102,8 @@ router.put('/:id/archive', verifyToken, async (req, res) => {
             return res.status(403).json({ message: 'Acesso negado. Você não tem permissão para arquivar esta ideia.' });
         }
 
-        idea.archived = true; // Marca a ideia como arquivada
-        await idea.save(); // Salva as alterações
+        idea.isArchived = true; // Use 'isArchived' em vez de 'archived'
+        await idea.save();
 
         res.status(200).json({ message: 'Ideia arquivada com sucesso' });
     } catch (error) {
@@ -105,6 +111,5 @@ router.put('/:id/archive', verifyToken, async (req, res) => {
         res.status(500).json({ message: 'Erro ao arquivar a ideia', error: error.message });
     }
 });
-
 
 module.exports = router;

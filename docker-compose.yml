@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: eduardofirmino
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: sistema_ideias
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend-ideias
+    environment:
+      DB_USERNAME: eduardofirmino
+      DB_PASSWORD: postgres
+      DB_DATABASE: sistema_ideias
+      DB_HOST: database
+      DB_PORT: 5432
+      JWT_SECRET: Gk9w8!p^a3Zb5fD@jK1h8*E7yq0W
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - database
+
+  frontend:
+    build:
+      context: ./frontend-ideias
+    environment:
+      REACT_APP_API_URL: http://backend:3000/api
+    ports:
+      - "3001:3001"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:

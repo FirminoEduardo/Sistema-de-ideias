@@ -1,0 +1,26 @@
+# Dockerfile do frontend
+FROM node:14
+
+# Cria o diretório de trabalho
+WORKDIR /usr/src/app
+
+# Copia o package.json e o package-lock.json para instalar dependências
+COPY package*.json ./
+
+# Instala as dependências
+RUN npm install
+
+# Copia o código do frontend
+COPY . .
+
+# Compila o projeto
+RUN npm run build
+
+# Instala o servidor HTTP para servir o build estático
+RUN npm install -g serve
+
+# Expõe a porta em que o frontend rodará
+EXPOSE 3001
+
+# Comando para rodar o servidor
+CMD ["serve", "-s", "build", "-l", "3001"]

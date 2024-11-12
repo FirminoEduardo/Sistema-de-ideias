@@ -63,18 +63,21 @@ const IdeaList = () => {
   };
 
   const handleComment = async (ideaId) => {
-    const commentText = commentTexts[ideaId]; // Pega o texto do comentário para a ideia específica
-    if (!commentText) return; // Não faz nada se o campo de comentário estiver vazio
+    const commentText = commentTexts[ideaId]; // Obtém o texto do comentário para a ideia específica
+    if (!commentText) {
+        alert("O comentário não pode estar vazio.");
+        return;
+    }
 
     try {
-      await api.post(`/ideas/${ideaId}/comments`, { conteudo: commentText }); // Envia o comentário
-      fetchIdeas(); // Atualiza a lista de ideias após adicionar um comentário
-      setCommentTexts((prev) => ({ ...prev, [ideaId]: '' })); // Limpa o campo de comentário para essa ideia
+        await api.post(`/ideas/${ideaId}/comments`, { comentario: commentText }); // Envia o comentário como 'comentario'
+        fetchIdeas(); // Atualiza a lista de ideias após adicionar um comentário
+        setCommentTexts((prev) => ({ ...prev, [ideaId]: '' })); // Limpa o campo de comentário para essa ideia
     } catch (error) {
-      console.error('Erro ao adicionar comentário:', error);
-      alert('Erro ao adicionar comentário: ' + error.response?.data?.message || error.message);
+        console.error('Erro ao adicionar comentário:', error);
+        alert('Erro ao adicionar comentário: ' + (error.response?.data?.message || error.message));
     }
-  };
+};
 
   const handleArchive = async (id) => {
     try {
@@ -118,18 +121,18 @@ const IdeaList = () => {
               </div>
 
               <div className="comments-list">
-                {idea.comments && idea.comments.length > 0 ? (
-                  idea.comments.sort((a, b) => b.votos - a.votos).map(comment => (
-                    <div key={comment.id} className="comment-item">
-                      <p>{comment.conteudo}</p>
-                      <p>Votos: {comment.votos}</p>
-                      <button onClick={() => handleVoteComment(idea.id, comment.id)}>Votar</button>
-                    </div>
-                  ))
-                ) : (
-                  <p>Nenhum comentário encontrado.</p>
-                )}
-              </div>
+  {idea.comments && idea.comments.length > 0 ? (
+    idea.comments.sort((a, b) => b.votos - a.votos).map(comment => (
+      <div key={comment.id} className="comment-item">
+        <p>{comment.comentario}</p> {/* Altere para 'comentario' */}
+        <p>Votos: {comment.votos}</p>
+        <button onClick={() => handleVoteComment(idea.id, comment.id)}>Votar</button>
+      </div>
+    ))
+  ) : (
+    <p>Nenhum comentário encontrado.</p>
+  )}
+</div>
             </li>
           ))
         ) : (
